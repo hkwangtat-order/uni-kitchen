@@ -300,14 +300,17 @@
     }
 
     // === 發送 WhatsApp (廚房部版) ===
-    function sendWhatsApp() {
+function sendWhatsApp() {
         if (Object.keys(cart).length === 0) {
             alert("請先選擇產品！");
             return;
         }
 
-        // 註明是廚房部
-        let msg = "海膽仔 (廚房部) 訂貨單：\n";
+        // --- 在這裡設定客戶編號 (網頁不顯示，只發給你看) ---
+        const customerCode = "A2888A"; 
+
+        // 訊息內容包含編號
+        let msg = `海膽仔 (廚房部) 訂貨單：\n(客戶編號: ${customerCode})\n`;
         msg += "------------------------\n";
 
         const orderedCart = products.filter(p => cart[p.id]);
@@ -331,3 +334,4 @@
 </body>
 
 </html>
+
