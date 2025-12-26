@@ -41,6 +41,7 @@
         .qty-btn { width: 35px; height: 100%; border-radius: 0; background: #f8f9fa; color: #212529; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; font-size: 1.2rem; user-select: none; border: none; }
         .qty-btn:active { background: #ffc107; }
         .qty-input { width: 50px; text-align: center; border: none; font-weight: bold; font-size: 1.1rem; color: #333; background: transparent; padding: 0; }
+        .qty-input.unit-kg { color: #d63384; font-size: 1rem; } /* 粉紅色 K 單位樣式 */
         
         /* 選中樣式 */
         .product-row.selected { background-color: #fff9db; border-left: 5px solid #ffc107; }
@@ -122,10 +123,18 @@
     const customerName = "海膽仔(廚房部)";
     const customerCode = "A2888A";
 
+    // 特殊鰻魚清單 (5K 邏輯)
+    const eelProducts = ["鰻魚 (40)", "鰻魚 (80)"];
+
     // === 產品數據庫 ===
     const products = [
         { name: "幼鹽", cat: "一、干貨" }, { name: "上白糖", cat: "一、干貨" }, { name: "天婦羅粉", cat: "一、干貨" }, { name: "QP沙律汁", cat: "一、干貨" }, { name: "咖喱磚 (辛口)", cat: "一、干貨" }, { name: "咖喱磚 (甘口)", cat: "一、干貨" }, { name: "大紫菜", cat: "一、干貨" }, { name: "蒜粉", cat: "一、干貨" }, { name: "雞汁", cat: "一、干貨" }, { name: "麻油", cat: "一、干貨" }, { name: "味淋 (支)", cat: "一、干貨" }, { name: "煮酒 (支)", cat: "一、干貨" }, { name: "昆布鰹魚汁", cat: "一、干貨" }, { name: "柚子醋", cat: "一、干貨" }, { name: "5號仔", cat: "一、干貨" }, { name: "鰻魚汁", cat: "一、干貨" }, { name: "食研烤肉醬", cat: "一、干貨" }, { name: "生薑汁", cat: "一、干貨" }, { name: "碎海草", cat: "一、干貨" }, { name: "泡菜醬 (桃屋)", cat: "一、干貨" }, { name: "914保鮮膜", cat: "一、干貨" }, { name: "日本青椒仔", cat: "一、干貨" }, { name: "拉麵筍", cat: "一、干貨" }, { name: "天油", cat: "一、干貨" }, { name: "醫生手套M", cat: "一、干貨" }, { name: "無味油揚", cat: "一、干貨" }, { name: "木魚精", cat: "一、干貨" }, { name: "萬字豉油 (支)", cat: "一、干貨" }, { name: "木魚絲", cat: "一、干貨" }, { name: "味鹽", cat: "一、干貨" }, { name: "味椒鹽", cat: "一、干貨" }, { name: "竹叶", cat: "一、干貨" }, { name: "日本番薯", cat: "一、干貨" }, { name: "日本南瓜", cat: "一、干貨" },
-        { name: "熟食帶子 (L)", cat: "二、凍貨" }, { name: "熟食帶子 (5S)", cat: "二、凍貨" }, { name: "枝豆", cat: "二、凍貨" }, { name: "鳴門卷", cat: "二、凍貨" }, { name: "豬骨Q湯", cat: "二、凍貨" }, { name: "蕎麥面", cat: "二、凍貨" }, { name: "烏冬", cat: "二、凍貨" }, { name: "豬軟骨", cat: "二、凍貨" }, { name: "鰻魚 (40)", cat: "二、凍貨" }, { name: "鰻魚 (80)", cat: "二、凍貨" }, { name: "叉燒", cat: "二、凍貨" }, { name: "肥牛片", cat: "二、凍貨" }, { name: "雞肉卷", cat: "二、凍貨" }, { name: "廣島蠔 (2L)", cat: "二、凍貨" }, { name: "急凍蜆", cat: "二、凍貨" }, { name: "巴西雞扒 (包)", cat: "二、凍貨" }, { name: "泡菜", cat: "二、凍貨" }, { name: "幹拉麵 (箱)", cat: "二、凍貨" }, { name: "一休面豉", cat: "二、凍貨" }, { name: "西京白麵豉", cat: "二、凍貨" },
+        { name: "熟食帶子 (L)", cat: "二、凍貨" }, { name: "熟食帶子 (5S)", cat: "二、凍貨" }, { name: "枝豆", cat: "二、凍貨" }, { name: "鳴門卷", cat: "二、凍貨" }, { name: "豬骨Q湯", cat: "二、凍貨" }, { name: "蕎麥面", cat: "二、凍貨" }, { name: "烏冬", cat: "二、凍貨" }, { name: "豬軟骨", cat: "二、凍貨" }, 
+        
+        // 鰻魚 (套用 5K 規則)
+        { name: "鰻魚 (40)", cat: "二、凍貨" }, { name: "鰻魚 (80)", cat: "二、凍貨" }, 
+        
+        { name: "叉燒", cat: "二、凍貨" }, { name: "肥牛片", cat: "二、凍貨" }, { name: "雞肉卷", cat: "二、凍貨" }, { name: "廣島蠔 (2L)", cat: "二、凍貨" }, { name: "急凍蜆", cat: "二、凍貨" }, { name: "巴西雞扒 (包)", cat: "二、凍貨" }, { name: "泡菜", cat: "二、凍貨" }, { name: "幹拉麵 (箱)", cat: "二、凍貨" }, { name: "一休面豉", cat: "二、凍貨" }, { name: "西京白麵豉", cat: "二、凍貨" },
         { name: "天婦羅蝦", cat: "三、炸物凍貨" }, { name: "魷魚天婦羅", cat: "三、炸物凍貨" }, { name: "炸雞塊", cat: "三、炸物凍貨" }, { name: "唐揚雞軟骨CP", cat: "三、炸物凍貨" }, { name: "芝麻雞翼", cat: "三、炸物凍貨" }, { name: "雞皮餃子", cat: "三、炸物凍貨" }, { name: "日式餃子", cat: "三、炸物凍貨" }, { name: "海膽魚餅", cat: "三、炸物凍貨" }, { name: "黃吉列蝦", cat: "三、炸物凍貨" }, { name: "日本吉列炸蠔", cat: "三、炸物凍貨" }, { name: "吉列豬扒130g", cat: "三、炸物凍貨" }, { name: "黑豚肉眼", cat: "三、炸物凍貨" }, { name: "櫻花豆腐", cat: "三、炸物凍貨" }, { name: "章魚小丸子", cat: "三、炸物凍貨" }, { name: "芝士年糕", cat: "三、炸物凍貨" }, { name: "日本明太子雞翼", cat: "三、炸物凍貨" }, { name: "甘栗紫薯餅", cat: "三、炸物凍貨" }, { name: "軟殼蟹100g小", cat: "三、炸物凍貨" }, { name: "軟殼蟹120g大", cat: "三、炸物凍貨" }, { name: "炸蟹鉗", cat: "三、炸物凍貨" }, { name: "一口芝士", cat: "三、炸物凍貨" }, { name: "黑豚炸肉餅", cat: "三、炸物凍貨" }, { name: "吉列魚柳", cat: "三、炸物凍貨" }, { name: "面包糠", cat: "三、炸物凍貨" },
         { name: "雞皮串 (50)", cat: "四、串燒凍貨" }, { name: "雞腿肉串 (串)", cat: "四、串燒凍貨" }, { name: "雞腎串 (50)", cat: "四、串燒凍貨" }, { name: "鸡中翼串 (20)", cat: "四、串燒凍貨" }, { name: "雞頸肉串", cat: "四、串燒凍貨" }, { name: "肥腸 (串)", cat: "四、串燒凍貨" }, { name: "牛舌", cat: "四、串燒凍貨" }, { name: "蝴蝶肉", cat: "四、串燒凍貨" }, { name: "利頭", cat: "四、串燒凍貨" }, { name: "一口牛粒", cat: "四、串燒凍貨" }, { name: "魷魚筒", cat: "四、串燒凍貨" }, { name: "鯖魚200g", cat: "四、串燒凍貨" }, { name: "銀鱈魚", cat: "四、串燒凍貨" }, { name: "明太子 (1K)", cat: "四、串燒凍貨" }, { name: "甲罗烧", cat: "四、串燒凍貨" }, { name: "魚勝魚干", cat: "四、串燒凍貨" }, { name: "五花腩串", cat: "四、串燒凍貨" }, { name: "白鱔串", cat: "四、串燒凍貨" }, { name: "鸡软骨串 (50)", cat: "四、串燒凍貨" }, { name: "免治雞肉棒", cat: "四、串燒凍貨" }
     ];
@@ -214,6 +223,16 @@
     function createRowHtml(p) {
         const qty = cart[p.id] || 0;
         const rowClass = qty > 0 ? 'selected' : '';
+        const isEel = eelProducts.includes(p.name);
+        
+        // 顯示邏輯：如果是鰻魚且有數量，顯示 K
+        let displayVal = qty;
+        let inputClass = 'qty-input';
+        if (isEel && qty > 0) {
+            displayVal += 'K';
+            inputClass += ' unit-kg';
+        }
+
         return `
         <div class="product-row ${rowClass}" id="row-${p.id}">
             <div class="p-info">
@@ -222,7 +241,7 @@
             </div>
             <div class="qty-control">
                 <div class="qty-btn" onclick="updateQty('${p.id}', -1)">-</div>
-                <input type="text" class="qty-input" id="qty-${p.id}" value="${qty}" readonly>
+                <input type="text" class="${inputClass}" id="qty-${p.id}" value="${displayVal}" readonly>
                 <div class="qty-btn" onclick="updateQty('${p.id}', 1)">+</div>
             </div>
         </div>`;
@@ -241,26 +260,59 @@
         renderTable('');
     }
 
-    // === 核心更新邏輯 ===
+    // === 核心更新邏輯 (含鰻魚 5K 規則) ===
     function updateQty(id, delta) {
+        const product = products.find(p => p.id === id);
+        const isEel = eelProducts.includes(product.name);
+
         if (!cart[id]) cart[id] = 0;
-        cart[id] += delta;
-        if (cart[id] <= 0) delete cart[id];
-        
-        const mainInput = document.getElementById(`qty-${id}`);
-        if (mainInput) {
-            mainInput.value = cart[id] || 0;
-            const row = document.getElementById(`row-${id}`);
-            if (cart[id] > 0) row.classList.add('selected');
-            else row.classList.remove('selected');
+
+        // 鰻魚特殊邏輯
+        if (isEel) {
+            if (delta > 0 && cart[id] === 0) {
+                cart[id] = 5; // Start at 5
+            } else {
+                cart[id] += (delta * 5); // Step by 5
+            }
+        } else {
+            cart[id] += delta; // Normal +1
         }
 
-        if (document.getElementById('cartModal').classList.contains('show')) {
-            renderCartModalItems();
-        }
+        if (cart[id] <= 0) delete cart[id];
+        
+        // 更新 UI
+        updateUI(id, isEel);
         
         saveCart();
         calculateTotal();
+    }
+
+    function updateUI(id, isEel) {
+        const qty = cart[id] || 0;
+        let displayVal = qty;
+        let addClass = false;
+
+        if (isEel && qty > 0) {
+            displayVal += 'K';
+            addClass = true;
+        }
+
+        // 主列表
+        const mainInput = document.getElementById(`qty-${id}`);
+        if (mainInput) {
+            mainInput.value = displayVal;
+            if (addClass) mainInput.classList.add('unit-kg');
+            else mainInput.classList.remove('unit-kg');
+
+            const row = document.getElementById(`row-${id}`);
+            if (qty > 0) row.classList.add('selected');
+            else row.classList.remove('selected');
+        }
+
+        // Modal (如果開啟)
+        if (document.getElementById('cartModal').classList.contains('show')) {
+            renderCartModalItems();
+        }
     }
 
     function calculateTotal() {
@@ -298,6 +350,15 @@
         let html = '';
         items.forEach(p => {
             const qty = cart[p.id];
+            const isEel = eelProducts.includes(p.name);
+            let displayVal = qty;
+            let inputClass = 'qty-input';
+            
+            if (isEel) {
+                displayVal += 'K';
+                inputClass += ' unit-kg';
+            }
+
             html += `
             <div class="product-row selected">
                 <div class="p-info">
@@ -305,7 +366,7 @@
                 </div>
                 <div class="qty-control">
                     <div class="qty-btn" onclick="updateQty('${p.id}', -1)">-</div>
-                    <input type="text" class="qty-input" value="${qty}" readonly>
+                    <input type="text" class="${inputClass}" value="${displayVal}" readonly>
                     <div class="qty-btn" onclick="updateQty('${p.id}', 1)">+</div>
                 </div>
             </div>`;
@@ -337,7 +398,10 @@
         const orderedCart = products.filter(p => cart[p.id]);
         
         orderedCart.forEach(p => {
-            const q = cart[p.id];
+            let q = cart[p.id];
+            if (eelProducts.includes(p.name)) {
+                q += 'K'; // WhatsApp 也要帶 K
+            }
             msg += ` ${q}  ${p.name}\n`; 
         });
 
