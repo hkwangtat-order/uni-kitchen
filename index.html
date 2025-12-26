@@ -5,213 +5,166 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta property="og:title" content="海膽仔(廚房部) - 電子落單表">
     <meta property="og:description" content="香港宏達有限公司提供">
-    
     <title>海膽仔(廚房部) - 專用訂貨單</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f8f9fa; padding-bottom: 100px; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f8f9fa; padding-bottom: 120px; }
         
-        /* 頂部客製化 - 保持一致風格 */
-        .top-bar { background-color: #212529; color: white; padding: 15px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        /* 頂部客製化 */
+        .top-bar { background-color: #212529; color: white; padding: 15px; position: sticky; top: 0; z-index: 1020; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
         .client-name { font-size: 1.3rem; font-weight: 800; color: #ffc107; } 
         .dept-badge { background-color: #d32f2f; color: white; font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; margin-left: 5px; vertical-align: middle; }
-
+        
         /* 導航按鈕 */
-        .nav-scroller { overflow-x: auto; white-space: nowrap; padding: 10px; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 70px; z-index: 990; }
-        .nav-btn { display: inline-block; padding: 8px 16px; margin-right: 8px; border-radius: 20px; border: 1px solid #ccc; color: #333; text-decoration: none; font-size: 0.95rem; background: #fff; font-weight: 600; }
+        .nav-scroller { overflow-x: auto; white-space: nowrap; padding: 10px 10px 0 10px; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 70px; z-index: 990; }
+        .nav-btn { display: inline-block; padding: 8px 16px; margin-right: 8px; margin-bottom: 10px; border-radius: 20px; border: 1px solid #ccc; color: #333; text-decoration: none; font-size: 0.95rem; background: #fff; font-weight: 600; transition: all 0.2s; }
         .nav-btn.active { background: #212529; color: #ffc107; border-color: #212529; }
 
+        /* 搜尋框 */
+        .search-section { background-color: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #ddd; }
+        .search-wrapper { position: relative; }
+        .search-input { border-radius: 20px; border: 1px solid #ccc; padding: 8px 35px 8px 15px; width: 100%; }
+        .btn-clear-search { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #adb5bd; cursor: pointer; font-size: 1.1rem; display: none; z-index: 10; }
+
         /* 分類標題 */
-        .category-header { background-color: #fff3cd; color: #212529; font-weight: 800; font-size: 1.2rem; padding: 15px; border-left: 6px solid #ffc107; margin-top: 0; scroll-margin-top: 130px; }
+        .category-header { background-color: #fff3cd; color: #212529; font-weight: 800; font-size: 1.1rem; padding: 10px 15px; border-left: 6px solid #ffc107; margin-top: 0; scroll-margin-top: 130px; }
         
         /* 產品列表 */
-        .product-row { background: white; border-bottom: 1px solid #eee; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .p-name { font-size: 1.15rem; font-weight: 700; color: #000; line-height: 1.4; }
+        .product-row { background: white; border-bottom: 1px solid #eee; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .p-info { flex: 1; padding-right: 10px; overflow: hidden; }
+        .p-name { font-size: 1.1rem; font-weight: 700; color: #000; line-height: 1.3; margin-bottom: 2px; }
+        .p-cat-label { font-size: 0.75rem; color: #999; }
         
         /* 數量控制 */
-        .qty-control { display: flex; align-items: center; background: #fff; border: 1px solid #ced4da; border-radius: 8px; padding: 2px; width: 130px; justify-content: space-between; height: 45px; flex-shrink: 0; margin-left: 10px; }
-        .qty-btn { width: 40px; height: 100%; border-radius: 6px; background: #f8f9fa; color: #212529; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; font-size: 1.5rem; user-select: none; }
+        .qty-control { display: flex; align-items: center; background: #fff; border: 1px solid #ced4da; border-radius: 8px; width: 120px; justify-content: space-between; height: 38px; flex-shrink: 0; overflow: hidden; }
+        .qty-btn { width: 35px; height: 100%; border-radius: 0; background: #f8f9fa; color: #212529; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; font-size: 1.2rem; user-select: none; border: none; }
         .qty-btn:active { background: #ffc107; }
-        .qty-input { width: 40px; text-align: center; border: none; font-weight: bold; font-size: 1.3rem; color: #333; background: transparent; }
+        .qty-input { width: 50px; text-align: center; border: none; font-weight: bold; font-size: 1.1rem; color: #333; background: transparent; padding: 0; }
         
         /* 選中樣式 */
-        .product-row.selected { background-color: #fffbf0; border-left: 5px solid #ffc107; }
+        .product-row.selected { background-color: #fff9db; border-left: 5px solid #ffc107; }
 
         /* 底部結帳欄 */
-        .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; box-shadow: 0 -4px 15px rgba(0,0,0,0.1); padding: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 1020; }
-        .total-info { font-size: 1.2rem; font-weight: bold; color: #333; }
-        .btn-whatsapp { background: #25D366; color: white; border: none; padding: 12px 35px; border-radius: 50px; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
+        .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; box-shadow: 0 -4px 15px rgba(0,0,0,0.15); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; z-index: 1030; gap: 10px; }
+        .total-box { font-size: 1.1rem; font-weight: bold; color: #333; }
+        .total-num { color: #d32f2f; font-size: 1.4rem; padding: 0 3px; }
         
-        /* 搜尋框 */
-        .search-container { padding: 10px; background: white; position: sticky; top: 120px; z-index: 980; border-bottom: 1px solid #eee; }
-        .form-control { border-radius: 20px; padding: 10px 20px; background-color: #f1f3f5; border: none; font-size: 1rem; }
+        /* 按鈕樣式 */
+        .btn-view-cart { background-color: #6c757d; color: white; border: none; padding: 10px 18px; border-radius: 50px; font-weight: bold; font-size: 0.95rem; white-space: nowrap; transition: all 0.3s ease; }
+        .btn-view-cart.active { background: linear-gradient(45deg, #ff9800, #ff5722); box-shadow: 0 4px 12px rgba(255, 87, 34, 0.4); transform: scale(1.05); }
+        .btn-whatsapp { background-color: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: bold; font-size: 1.1rem; flex-grow: 1; display: flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
+
+        /* Modal Styles */
+        .modal-header { background-color: #212529; color: white; }
+        .modal-title { font-weight: bold; color: #ffc107; }
     </style>
 </head>
 <body>
 
-<div class="top-bar">
-    <div class="d-flex justify-content-between align-items-center">
+<div class="sticky-header-container">
+    <div class="top-bar d-flex justify-content-between align-items-center">
         <div>
             <div class="client-name">海膽仔 <span class="dept-badge">廚房部</span></div>
-            <div style="font-size: 0.9rem; opacity: 0.9; color: #ddd;">專用訂貨單</div>
+            <div style="font-size: 0.8rem; color: #ccc;">A2888A</div>
         </div>
-        <div style="text-align: right; font-size: 0.85rem; color: #ccc;">
+        <div style="text-align: right; font-size: 0.8rem; color: #ccc;">
             宏達批發<br>Tel: 63771688
         </div>
     </div>
+
+    <div class="nav-scroller" id="navContainer"></div>
+
+    <div class="search-section">
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 搜尋廚房貨品..." oninput="filterProducts()">
+            <i class="bi bi-x-circle-fill btn-clear-search" id="clearSearchBtn" onclick="clearSearch()"></i>
+        </div>
+    </div>
 </div>
 
-<div class="nav-scroller" id="navContainer">
-    </div>
-
-<div class="search-container">
-    <input type="text" id="searchInput" class="form-control" placeholder="🔍 搜尋廚房部貨品..." onkeyup="filterProducts()">
-</div>
-
-<div id="product-list">
-    </div>
+<div id="product-list" style="padding-top: 10px;"></div>
 
 <div class="bottom-bar">
-    <div class="total-info">
-        共 <span id="totalQty" style="color: #d32f2f; font-size: 1.5rem;">0</span> 件貨品
+    <div class="total-box">
+        共 <span id="totalQty" class="total-num">0</span> 款
     </div>
+    <button id="viewCartBtn" class="btn-view-cart" onclick="openCartModal()" disabled>
+        <i class="bi bi-cart3"></i> 查看已選
+    </button>
     <button class="btn-whatsapp" onclick="sendWhatsApp()">
         <i class="bi bi-whatsapp"></i> 發送訂單
     </button>
 </div>
 
+<div class="modal fade" id="cartModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">已選產品清單</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="cartModalBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger me-auto" onclick="clearCart()">
+                    <i class="bi bi-trash"></i> 清空
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">繼續選購</button>
+                <button type="button" class="btn btn-success" onclick="sendWhatsApp()">確認發送</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    // === 產品數據庫 (廚房部專用) ===
+    const customerName = "海膽仔(廚房部)";
+    const customerCode = "A2888A";
+
+    // === 產品數據庫 ===
     const products = [
-        // --- 一、干貨 ---
-        { name: "幼鹽", cat: "一、干貨" },
-        { name: "上白糖", cat: "一、干貨" },
-        { name: "天婦羅粉", cat: "一、干貨" },
-        { name: "QP沙律汁", cat: "一、干貨" },
-        { name: "咖喱磚 (辛口)", cat: "一、干貨" },
-        { name: "咖喱磚 (甘口)", cat: "一、干貨" },
-        { name: "大紫菜", cat: "一、干貨" },
-        { name: "蒜粉", cat: "一、干貨" },
-        { name: "雞汁", cat: "一、干貨" },
-        { name: "麻油", cat: "一、干貨" },
-        { name: "味淋 (支)", cat: "一、干貨" },
-        { name: "煮酒 (支)", cat: "一、干貨" },
-        { name: "昆布鰹魚汁", cat: "一、干貨" },
-        { name: "柚子醋", cat: "一、干貨" },
-        { name: "5號仔", cat: "一、干貨" },
-        { name: "鰻魚汁", cat: "一、干貨" },
-        { name: "食研烤肉醬", cat: "一、干貨" },
-        { name: "生薑汁", cat: "一、干貨" },
-        { name: "碎海草", cat: "一、干貨" },
-        { name: "泡菜醬 (桃屋)", cat: "一、干貨" },
-        { name: "914保鮮膜", cat: "一、干貨" },
-        { name: "日本青椒仔", cat: "一、干貨" },
-        { name: "拉麵筍", cat: "一、干貨" },
-        { name: "天油", cat: "一、干貨" },
-        { name: "醫生手套M", cat: "一、干貨" },
-        { name: "無味油揚", cat: "一、干貨" },
-        { name: "木魚精", cat: "一、干貨" },
-        { name: "萬字豉油 (支)", cat: "一、干貨" },
-        { name: "木魚絲", cat: "一、干貨" },
-        { name: "味鹽", cat: "一、干貨" },
-        { name: "味椒鹽", cat: "一、干貨" },
-        { name: "竹叶", cat: "一、干貨" },
-        { name: "日本番薯", cat: "一、干貨" },
-        { name: "日本南瓜", cat: "一、干貨" },
-
-        // --- 二、凍貨 ---
-        { name: "熟食帶子 (L)", cat: "二、凍貨" },
-        { name: "熟食帶子 (5S)", cat: "二、凍貨" },
-        { name: "枝豆", cat: "二、凍貨" },
-        { name: "鳴門卷", cat: "二、凍貨" },
-        { name: "豬骨Q湯", cat: "二、凍貨" },
-        { name: "蕎麥面", cat: "二、凍貨" },
-        { name: "烏冬", cat: "二、凍貨" },
-        { name: "豬軟骨", cat: "二、凍貨" },
-        { name: "鰻魚 (40)", cat: "二、凍貨" },
-        { name: "鰻魚 (80)", cat: "二、凍貨" },
-        { name: "叉燒", cat: "二、凍貨" },
-        { name: "肥牛片", cat: "二、凍貨" },
-        { name: "雞肉卷", cat: "二、凍貨" },
-        { name: "廣島蠔 (2L)", cat: "二、凍貨" },
-        { name: "急凍蜆", cat: "二、凍貨" },
-        { name: "巴西雞扒 (包)", cat: "二、凍貨" },
-        { name: "泡菜", cat: "二、凍貨" },
-        { name: "幹拉麵 (箱)", cat: "二、凍貨" },
-        { name: "一休面豉", cat: "二、凍貨" },
-        { name: "西京白麵豉", cat: "二、凍貨" },
-
-        // --- 三、炸物凍貨 ---
-        { name: "天婦羅蝦", cat: "三、炸物凍貨" },
-        { name: "魷魚天婦羅", cat: "三、炸物凍貨" },
-        { name: "炸雞塊", cat: "三、炸物凍貨" },
-        { name: "唐揚雞軟骨CP", cat: "三、炸物凍貨" },
-        { name: "芝麻雞翼", cat: "三、炸物凍貨" },
-        { name: "雞皮餃子", cat: "三、炸物凍貨" },
-        { name: "日式餃子", cat: "三、炸物凍貨" },
-        { name: "海膽魚餅", cat: "三、炸物凍貨" },
-        { name: "黃吉列蝦", cat: "三、炸物凍貨" },
-        { name: "日本吉列炸蠔", cat: "三、炸物凍貨" },
-        { name: "吉列豬扒130g", cat: "三、炸物凍貨" },
-        { name: "黑豚肉眼", cat: "三、炸物凍貨" },
-        { name: "櫻花豆腐", cat: "三、炸物凍貨" },
-        { name: "章魚小丸子", cat: "三、炸物凍貨" },
-        { name: "芝士年糕", cat: "三、炸物凍貨" },
-        { name: "日本明太子雞翼", cat: "三、炸物凍貨" },
-        { name: "甘栗紫薯餅", cat: "三、炸物凍貨" },
-        { name: "軟殼蟹100g小", cat: "三、炸物凍貨" },
-        { name: "軟殼蟹120g大", cat: "三、炸物凍貨" },
-        { name: "炸蟹鉗", cat: "三、炸物凍貨" },
-        { name: "一口芝士", cat: "三、炸物凍貨" },
-        { name: "黑豚炸肉餅", cat: "三、炸物凍貨" },
-        { name: "吉列魚柳", cat: "三、炸物凍貨" },
-        { name: "面包糠", cat: "三、炸物凍貨" },
-
-        // --- 四、串燒凍貨 ---
-        { name: "雞皮串 (50)", cat: "四、串燒凍貨" },
-        { name: "雞腿肉串 (串)", cat: "四、串燒凍貨" },
-        { name: "雞腎串 (50)", cat: "四、串燒凍貨" },
-        { name: "鸡中翼串 (20)", cat: "四、串燒凍貨" },
-        { name: "雞頸肉串", cat: "四、串燒凍貨" },
-        { name: "肥腸 (串)", cat: "四、串燒凍貨" },
-        { name: "牛舌", cat: "四、串燒凍貨" },
-        { name: "蝴蝶肉", cat: "四、串燒凍貨" },
-        { name: "利頭", cat: "四、串燒凍貨" },
-        { name: "一口牛粒", cat: "四、串燒凍貨" },
-        { name: "魷魚筒", cat: "四、串燒凍貨" },
-        { name: "鯖魚200g", cat: "四、串燒凍貨" },
-        { name: "銀鱈魚", cat: "四、串燒凍貨" },
-        { name: "明太子 (1K)", cat: "四、串燒凍貨" },
-        { name: "甲罗烧", cat: "四、串燒凍貨" },
-        { name: "魚勝魚干", cat: "四、串燒凍貨" },
-        { name: "五花腩串", cat: "四、串燒凍貨" },
-        { name: "白鱔串", cat: "四、串燒凍貨" },
-        { name: "鸡软骨串 (50)", cat: "四、串燒凍貨" },
-        { name: "免治雞肉棒", cat: "四、串燒凍貨" }
+        { name: "幼鹽", cat: "一、干貨" }, { name: "上白糖", cat: "一、干貨" }, { name: "天婦羅粉", cat: "一、干貨" }, { name: "QP沙律汁", cat: "一、干貨" }, { name: "咖喱磚 (辛口)", cat: "一、干貨" }, { name: "咖喱磚 (甘口)", cat: "一、干貨" }, { name: "大紫菜", cat: "一、干貨" }, { name: "蒜粉", cat: "一、干貨" }, { name: "雞汁", cat: "一、干貨" }, { name: "麻油", cat: "一、干貨" }, { name: "味淋 (支)", cat: "一、干貨" }, { name: "煮酒 (支)", cat: "一、干貨" }, { name: "昆布鰹魚汁", cat: "一、干貨" }, { name: "柚子醋", cat: "一、干貨" }, { name: "5號仔", cat: "一、干貨" }, { name: "鰻魚汁", cat: "一、干貨" }, { name: "食研烤肉醬", cat: "一、干貨" }, { name: "生薑汁", cat: "一、干貨" }, { name: "碎海草", cat: "一、干貨" }, { name: "泡菜醬 (桃屋)", cat: "一、干貨" }, { name: "914保鮮膜", cat: "一、干貨" }, { name: "日本青椒仔", cat: "一、干貨" }, { name: "拉麵筍", cat: "一、干貨" }, { name: "天油", cat: "一、干貨" }, { name: "醫生手套M", cat: "一、干貨" }, { name: "無味油揚", cat: "一、干貨" }, { name: "木魚精", cat: "一、干貨" }, { name: "萬字豉油 (支)", cat: "一、干貨" }, { name: "木魚絲", cat: "一、干貨" }, { name: "味鹽", cat: "一、干貨" }, { name: "味椒鹽", cat: "一、干貨" }, { name: "竹叶", cat: "一、干貨" }, { name: "日本番薯", cat: "一、干貨" }, { name: "日本南瓜", cat: "一、干貨" },
+        { name: "熟食帶子 (L)", cat: "二、凍貨" }, { name: "熟食帶子 (5S)", cat: "二、凍貨" }, { name: "枝豆", cat: "二、凍貨" }, { name: "鳴門卷", cat: "二、凍貨" }, { name: "豬骨Q湯", cat: "二、凍貨" }, { name: "蕎麥面", cat: "二、凍貨" }, { name: "烏冬", cat: "二、凍貨" }, { name: "豬軟骨", cat: "二、凍貨" }, { name: "鰻魚 (40)", cat: "二、凍貨" }, { name: "鰻魚 (80)", cat: "二、凍貨" }, { name: "叉燒", cat: "二、凍貨" }, { name: "肥牛片", cat: "二、凍貨" }, { name: "雞肉卷", cat: "二、凍貨" }, { name: "廣島蠔 (2L)", cat: "二、凍貨" }, { name: "急凍蜆", cat: "二、凍貨" }, { name: "巴西雞扒 (包)", cat: "二、凍貨" }, { name: "泡菜", cat: "二、凍貨" }, { name: "幹拉麵 (箱)", cat: "二、凍貨" }, { name: "一休面豉", cat: "二、凍貨" }, { name: "西京白麵豉", cat: "二、凍貨" },
+        { name: "天婦羅蝦", cat: "三、炸物凍貨" }, { name: "魷魚天婦羅", cat: "三、炸物凍貨" }, { name: "炸雞塊", cat: "三、炸物凍貨" }, { name: "唐揚雞軟骨CP", cat: "三、炸物凍貨" }, { name: "芝麻雞翼", cat: "三、炸物凍貨" }, { name: "雞皮餃子", cat: "三、炸物凍貨" }, { name: "日式餃子", cat: "三、炸物凍貨" }, { name: "海膽魚餅", cat: "三、炸物凍貨" }, { name: "黃吉列蝦", cat: "三、炸物凍貨" }, { name: "日本吉列炸蠔", cat: "三、炸物凍貨" }, { name: "吉列豬扒130g", cat: "三、炸物凍貨" }, { name: "黑豚肉眼", cat: "三、炸物凍貨" }, { name: "櫻花豆腐", cat: "三、炸物凍貨" }, { name: "章魚小丸子", cat: "三、炸物凍貨" }, { name: "芝士年糕", cat: "三、炸物凍貨" }, { name: "日本明太子雞翼", cat: "三、炸物凍貨" }, { name: "甘栗紫薯餅", cat: "三、炸物凍貨" }, { name: "軟殼蟹100g小", cat: "三、炸物凍貨" }, { name: "軟殼蟹120g大", cat: "三、炸物凍貨" }, { name: "炸蟹鉗", cat: "三、炸物凍貨" }, { name: "一口芝士", cat: "三、炸物凍貨" }, { name: "黑豚炸肉餅", cat: "三、炸物凍貨" }, { name: "吉列魚柳", cat: "三、炸物凍貨" }, { name: "面包糠", cat: "三、炸物凍貨" },
+        { name: "雞皮串 (50)", cat: "四、串燒凍貨" }, { name: "雞腿肉串 (串)", cat: "四、串燒凍貨" }, { name: "雞腎串 (50)", cat: "四、串燒凍貨" }, { name: "鸡中翼串 (20)", cat: "四、串燒凍貨" }, { name: "雞頸肉串", cat: "四、串燒凍貨" }, { name: "肥腸 (串)", cat: "四、串燒凍貨" }, { name: "牛舌", cat: "四、串燒凍貨" }, { name: "蝴蝶肉", cat: "四、串燒凍貨" }, { name: "利頭", cat: "四、串燒凍貨" }, { name: "一口牛粒", cat: "四、串燒凍貨" }, { name: "魷魚筒", cat: "四、串燒凍貨" }, { name: "鯖魚200g", cat: "四、串燒凍貨" }, { name: "銀鱈魚", cat: "四、串燒凍貨" }, { name: "明太子 (1K)", cat: "四、串燒凍貨" }, { name: "甲罗烧", cat: "四、串燒凍貨" }, { name: "魚勝魚干", cat: "四、串燒凍貨" }, { name: "五花腩串", cat: "四、串燒凍貨" }, { name: "白鱔串", cat: "四、串燒凍貨" }, { name: "鸡软骨串 (50)", cat: "四、串燒凍貨" }, { name: "免治雞肉棒", cat: "四、串燒凍貨" }
     ];
 
-    // 為每個產品生成唯一 ID (方便系統運作，介面不顯示)
+    // 生成 ID (K001, K002...)
     products.forEach((p, index) => {
-        p.id = "K" + (index + 1).toString().padStart(3, '0'); // K代表Kitchen
+        p.id = "K" + (index + 1).toString().padStart(3, '0');
     });
 
     let cart = {}; 
+    let cartModal = null;
 
     // === 初始化 ===
     function init() {
+        loadCart(); 
         renderNav();
         renderTable();
+        cartModal = new bootstrap.Modal(document.getElementById('cartModal'));
     }
 
-    // === 渲染分類導航 ===
+    // === 記憶功能 ===
+    function loadCart() {
+        const savedCart = localStorage.getItem('orderCart_' + customerCode);
+        if (savedCart) {
+            try { cart = JSON.parse(savedCart); } catch(e) { console.error("Error", e); }
+        }
+        calculateTotal();
+    }
+
+    function saveCart() {
+        localStorage.setItem('orderCart_' + customerCode, JSON.stringify(cart));
+    }
+
+    // === 渲染導航 ===
     function renderNav() {
         const categories = [...new Set(products.map(p => p.cat))];
         const container = document.getElementById('navContainer');
-        
         container.innerHTML = `<a href="javascript:void(0)" class="nav-btn active" onclick="filterCat('all', this)">全部</a>`;
         categories.forEach(cat => {
-            // 移除分類標題中的數字編號以便顯示美觀 (可選)
             const displayCat = cat.split('、')[1] || cat; 
             container.innerHTML += `<a href="#cat-${cat}" class="nav-btn" onclick="filterCat('${cat}', this)">${displayCat}</a>`;
         });
@@ -222,10 +175,11 @@
         btn.classList.add('active');
         if (cat === 'all') {
             document.querySelectorAll('.category-section').forEach(el => el.style.display = 'block');
+            window.scrollTo(0, 0);
         } else {
             const target = document.getElementById(`cat-${cat}`);
             if (target) {
-                const offset = 120; 
+                const offset = 140; 
                 const elementPosition = target.getBoundingClientRect().top + window.pageYOffset;
                 window.scrollTo({ top: elementPosition - offset, behavior: "smooth" });
             }
@@ -248,19 +202,7 @@
                 currentCat = p.cat;
                 html += `<div class="category-header category-section" id="cat-${currentCat}">${currentCat}</div>`;
             }
-
-            const qty = cart[p.id] || 0;
-            const rowClass = qty > 0 ? 'selected' : '';
-
-            html += `
-            <div class="product-row ${rowClass}">
-                <div class="p-name">${p.name}</div>
-                <div class="qty-control">
-                    <div class="qty-btn" onclick="updateQty('${p.id}', -1)">-</div>
-                    <input type="text" class="qty-input" id="qty-${p.id}" value="${qty}" readonly>
-                    <div class="qty-btn" onclick="updateQty('${p.id}', 1)">+</div>
-                </div>
-            </div>`;
+            html += createRowHtml(p);
         });
 
         if (filteredProducts.length === 0) {
@@ -269,55 +211,134 @@
         container.innerHTML = html;
     }
 
+    function createRowHtml(p) {
+        const qty = cart[p.id] || 0;
+        const rowClass = qty > 0 ? 'selected' : '';
+        return `
+        <div class="product-row ${rowClass}" id="row-${p.id}">
+            <div class="p-info">
+                <div class="p-name">${p.name}</div>
+                <div class="p-cat-label">${p.cat.split('、')[1] || p.cat}</div>
+            </div>
+            <div class="qty-control">
+                <div class="qty-btn" onclick="updateQty('${p.id}', -1)">-</div>
+                <input type="text" class="qty-input" id="qty-${p.id}" value="${qty}" readonly>
+                <div class="qty-btn" onclick="updateQty('${p.id}', 1)">+</div>
+            </div>
+        </div>`;
+    }
+
     function filterProducts() {
         const text = document.getElementById('searchInput').value;
+        const clearBtn = document.getElementById('clearSearchBtn');
+        clearBtn.style.display = text.length > 0 ? 'block' : 'none';
         renderTable(text);
     }
 
-    // === 更新數量 ===
+    function clearSearch() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('clearSearchBtn').style.display = 'none';
+        renderTable('');
+    }
+
+    // === 核心更新邏輯 ===
     function updateQty(id, delta) {
         if (!cart[id]) cart[id] = 0;
         cart[id] += delta;
         if (cart[id] <= 0) delete cart[id];
         
-        const input = document.getElementById(`qty-${id}`);
-        if (input) {
-            input.value = cart[id] || 0;
-            const row = input.closest('.product-row');
+        const mainInput = document.getElementById(`qty-${id}`);
+        if (mainInput) {
+            mainInput.value = cart[id] || 0;
+            const row = document.getElementById(`row-${id}`);
             if (cart[id] > 0) row.classList.add('selected');
             else row.classList.remove('selected');
         }
+
+        if (document.getElementById('cartModal').classList.contains('show')) {
+            renderCartModalItems();
+        }
+        
+        saveCart();
         calculateTotal();
     }
 
-    // === 計算總數 ===
     function calculateTotal() {
         let count = 0;
-        for (let [id, q] of Object.entries(cart)) {
-            count += q; 
-        }
+        for (let key in cart) count++; 
         document.getElementById('totalQty').innerText = count;
+        
+        const btn = document.getElementById('viewCartBtn');
+        if (count > 0) {
+            btn.classList.add('active');
+            btn.disabled = false;
+            btn.innerHTML = `<i class="bi bi-cart-check-fill"></i> 查看已選 (${count})`;
+        } else {
+            btn.classList.remove('active');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="bi bi-cart3"></i> 查看已選`;
+        }
     }
 
-    // === 發送 WhatsApp (廚房部版) ===
-function sendWhatsApp() {
+    // === 購物車 Modal 邏輯 ===
+    function openCartModal() {
+        renderCartModalItems();
+        cartModal.show();
+    }
+
+    function renderCartModalItems() {
+        const container = document.getElementById('cartModalBody');
+        const items = products.filter(p => cart[p.id]);
+        
+        if (items.length === 0) {
+            container.innerHTML = '<div class="text-center p-4 text-muted">尚未選擇任何產品</div>';
+            return;
+        }
+
+        let html = '';
+        items.forEach(p => {
+            const qty = cart[p.id];
+            html += `
+            <div class="product-row selected">
+                <div class="p-info">
+                    <div class="p-name">${p.name}</div>
+                </div>
+                <div class="qty-control">
+                    <div class="qty-btn" onclick="updateQty('${p.id}', -1)">-</div>
+                    <input type="text" class="qty-input" value="${qty}" readonly>
+                    <div class="qty-btn" onclick="updateQty('${p.id}', 1)">+</div>
+                </div>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function clearCart() {
+        if (Object.keys(cart).length === 0) return;
+        if (confirm("確定要清空所有已選貨品嗎？")) {
+            cart = {};
+            localStorage.removeItem('orderCart_' + customerCode);
+            renderTable(); 
+            calculateTotal();
+            renderCartModalItems(); 
+        }
+    }
+
+    // === 發送 WhatsApp ===
+    function sendWhatsApp() {
         if (Object.keys(cart).length === 0) {
             alert("請先選擇產品！");
             return;
         }
 
-        // --- 在這裡設定客戶編號 (網頁不顯示，只發給你看) ---
-        const customerCode = "A2888A"; 
-
-        // 訊息內容包含編號
-        let msg = `海膽仔 (廚房部) 訂貨單：\n(客戶編號: ${customerCode})\n`;
+        let msg = `${customerName} 訂貨單：\n(客戶編號: ${customerCode})\n`;
         msg += "------------------------\n";
-
+        
         const orderedCart = products.filter(p => cart[p.id]);
         
         orderedCart.forEach(p => {
             const q = cart[p.id];
-            msg += `${p.name} x ${q}\n`;
+            msg += ` ${q}  ${p.name}\n`; 
         });
 
         msg += "------------------------\n";
@@ -332,6 +353,4 @@ function sendWhatsApp() {
 </script>
 
 </body>
-
 </html>
-
